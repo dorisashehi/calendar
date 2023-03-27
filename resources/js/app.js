@@ -1,1 +1,94 @@
 import './bootstrap';
+
+//save date into database or delete it
+function saveAvailability(date, available) {
+    //console.log(date);
+
+    let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    //let formated_date = date.toISOString().replace('T', ' ').replace('.', '').replace('Z', '');
+    //console.log(formated_date);
+
+    let method_type = 'POST';
+    if (available == false){
+        method_type = 'DELETE';
+        //console.log(method_type);
+    }
+
+    fetch('/availability/' + date, {
+        method: method_type,
+        headers: {
+            'X-CSRF-TOKEN': csrfToken
+        }
+    });
+}
+
+
+
+function getAvailability() {
+    return fetch('/availability')
+        .then(response => response.json())
+        .then(data => data.map(date => ({
+            title: 'fdfgd',
+            start: date,
+            backgroundColor: '#4CAF50',
+        }))
+        
+        );
+}
+
+//remove all and show all dates.
+const buttons = document.querySelectorAll('#availability');
+buttons.forEach(button => {
+    button.addEventListener('click', () => {
+        let available = button.getAttribute('data-value');
+    
+        document.querySelectorAll('.fc-day').forEach(day => {
+            
+            if (day.classList.contains('available') !== true) {
+                
+                if (!day.classList.contains('fc-day-other') && (day.getAttribute('data-date') != null)){
+                    day.classList.add('available');
+                    saveAvailability(day.getAttribute('data-date'), available);
+                }
+            
+            }
+        });
+
+    })
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        selectable: true,
+        select: function (info) {
+            if (info.start.getDay() < 6) { // Only allow weekdays to be selected
+                var clickedElement = info.jsEvent.target;
+                //console.log(clickedElement);
+                
+                clickedElement.closest('td').classList.toggle('available');
+
+
+                const date1 = new Date(info.start);
+                const year = date1.getFullYear();
+                const month = String(date1.getMonth() + 1).padStart(2, '0');
+                const day = String(date1.getDate()).padStart(2, '0');
+                const hours = String(date1.getHours()).padStart(2, '0');
+                const minutes = String(date1.getMinutes()).padStart(2, '0');
+                const seconds = String(date1.getSeconds()).padStart(2, '0');
+                const fromDate = `${year}-${month}-${day}`;
+                const fromTime = `${hours}:${minutes}:${seconds}`;
+                let formated_date = fromDate + " " + fromTime;
+                //console.log(available); // Outputs: 2023-03-07
+
+
+                console.log(clickedElement.closest('td').classList.contains('available'));
+                saveAvailability(formated_date, clickedElement.closest('td').classList.contains('available'));
+            }
+        },
+        events: getAvailability(),
+    });
+    calendar.render();
+});

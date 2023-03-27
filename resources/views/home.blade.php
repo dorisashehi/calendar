@@ -15,6 +15,12 @@
                     @endif
 
                     {{ __('You are logged in!') }}
+
+                    <div>
+                    <a href="#" id="availability" data-value = "false">I'm available none of the time</a> | 
+                    <a href="#" id="availability" data-value = "true">I'm available all the time</a>
+                    </div>
+                    <div id="calendar"></div>
                 </div>
             </div>
         </div>
