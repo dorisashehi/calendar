@@ -14,8 +14,15 @@ class Availability extends Controller
     public function index()
     {
         //
-        $dates = AvailabilityDates::where('user_id', true)->get();
+        $dates = AvailabilityDates::where('user_id', Auth::id())
+            ->get('date')
+            ->toArray();
         return response()->json($dates);
+
+        // $dates = AvailabilityDates::where('user_id', true)
+        //     ->get('date')
+        //     ->toArray();
+        // return response()->json($dates);
     }
 
     /**
