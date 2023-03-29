@@ -89,6 +89,7 @@ buttons.forEach(button => {
 document.addEventListener('DOMContentLoaded', function () {
     var calendarEl = document.getElementById('calendar');
 
+    //take all the days available from database and pass as events into database.
     fetch('/availability')
         .then(response => response.json())
         .then(data => {
@@ -96,7 +97,8 @@ document.addEventListener('DOMContentLoaded', function () {
             let events = data.map(date1 => ({
                 title: 'Available',
                 start: date1.date,
-                backgroundColor: '#4CAF50',
+                visible: false,
+                height: 'auto', // set height to auto
             }));
 
 
@@ -122,21 +124,18 @@ document.addEventListener('DOMContentLoaded', function () {
                         const fromTime = `${hours}:${minutes}:${seconds}`;
                         let formated_date = fromDate + " " + fromTime;
                         //console.log(available); // Outputs: 2023-03-07
-
-
-                        console.log(clickedElement.closest('td').classList.contains('available'));
+                        //console.log(clickedElement.closest('td').classList.contains('available'));
                         saveAvailability(formated_date, clickedElement.closest('td').classList.contains('available'));
                     }
                 },
                 events: events,
+                eventDidMount: function (info) { //after all the events taken from database. add to td class available.
+                    var dayGridEvents = document.querySelectorAll('.fc-daygrid-event-harness');
+                    dayGridEvents.forEach(function (day) {
+                        var eventElement = day.closest('td').classList.add('available');
+                    });
+                }
             });
             calendar.render();
-
-
-
-
-
         });
-
-
 });
