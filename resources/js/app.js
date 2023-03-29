@@ -40,19 +40,37 @@ function getAvailability() {
 const buttons = document.querySelectorAll('#availability');
 buttons.forEach(button => {
     button.addEventListener('click', () => {
-        let available = button.getAttribute('data-value');
-    
-        document.querySelectorAll('.fc-day').forEach(day => {
-            
-            if (day.classList.contains('available') !== true) {
-                
-                if (!day.classList.contains('fc-day-other') && (day.getAttribute('data-date') != null)){
-                    day.classList.add('available');
-                    saveAvailability(day.getAttribute('data-date'), available);
+        if(button.classList.contains('yes')){
+            console.log("------------------");
+            let available = button.getAttribute('data-value');
+
+            document.querySelectorAll('.fc-day').forEach(day => {
+
+                if (day.classList.contains('available') !== true) {
+
+                    if (!day.classList.contains('fc-day-other') && (day.getAttribute('data-date') != null)) {
+                        day.classList.add('available');
+                        saveAvailability(day.getAttribute('data-date'), true);
+                    }
+
                 }
-            
-            }
-        });
+            });
+        }else{
+            let available = button.getAttribute('data-value');
+
+            document.querySelectorAll('.fc-day').forEach(day => {
+
+                if (day.classList.contains('available') === true) {
+
+                    if (!day.classList.contains('fc-day-other') && (day.getAttribute('data-date') != null)) {
+                        day.classList.remove('available');
+                        saveAvailability(day.getAttribute('data-date'), false);
+                    }
+
+                }
+            });
+        }
+       
 
     })
 });
@@ -88,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 saveAvailability(formated_date, clickedElement.closest('td').classList.contains('available'));
             }
         },
-        events: getAvailability(),
+        events: '/availability',
     });
     calendar.render();
 });
