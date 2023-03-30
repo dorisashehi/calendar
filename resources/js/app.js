@@ -11,7 +11,6 @@ function saveAvailability(date, available) {
     let method_type = 'POST';
     if (available == false){
         method_type = 'DELETE';
-        //console.log(method_type);
     }
 
     fetch('/availability/' + date, {
