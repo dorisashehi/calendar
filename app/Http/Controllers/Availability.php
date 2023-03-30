@@ -29,18 +29,39 @@ class Availability extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Check if really the date clicked is at db or not
+     */
+    public function checkAvailability($userId, $date)
+    {
+        $availability = AvailabilityDates::where('user_id', $userId)
+            ->where('date', $date)
+            ->first();
+
+        if ($availability) {
+            return $availability->available;
+        } else {
+            return null;
+        }
+    }
+    /**
+     * Store the date clicked into db.
      */
     public function store(Request $request)
     {
         //
+        $availble_or_not = $this->checkAvailability(
+            $request->user()->id,
+            $request->date
+        );
 
-        $date = new AvailabilityDates();
-        $date->user_id = $request->user()->id;
-        $date->date = $request->date;
-        $date->save();
-
-        return response()->json(['status' => 'success']);
+        //then save into db
+        if ($availble_or_not == null) {
+            $date = new AvailabilityDates();
+            $date->user_id = $request->user()->id;
+            $date->date = $request->date;
+            $date->save();
+            return response()->json(['status' => 'success']);
+        }
     }
 
     /**
@@ -68,14 +89,21 @@ class Availability extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove date clicked from db.
      */
     public function destroy(Request $request)
     {
-        AvailabilityDates::where('date', $request->date)
-            ->where('user_id', $request->user()->id)
-            ->delete();
+        $availble_or_not = $this->checkAvailability(
+            $request->user()->id,
+            $request->date
+        );
 
-        return response()->json(['status' => 'deleted']);
+        //then delete from db
+        if ($availble_or_not == 1) {
+            AvailabilityDates::where('date', $request->date)
+                ->where('user_id', $request->user()->id)
+                ->delete();
+            return response()->json(['status' => 'deleted']);
+        }
     }
 }
