@@ -12,19 +12,28 @@
 }
 .fc .fc-daygrid-day.fc-day-today.non-available{
     background-color: red;
+    border: 3px solid black;
 }
-.fc-daygrid-event-harness{
-    visibility: hidden;
-}
+
 .fc-day.fc-daygrid-day{
     background-color: red;
 }
-.fc-day.fc-day-other.fc-daygrid-day{
+
+.fc-day.fc-day-other.fc-daygrid-day,.fc-day.fc-day-other.fc-daygrid-day.available{
     background-color: transparent;
 }
+
 .fc-day.fc-daygrid-day.available{
     background-color: green;
 }
 .fc .fc-daygrid-day.fc-day-today.available{
     background-color: green;
+}
+.fc-day.fc-day-sat.fc-daygrid-day.available,
+.fc-day.fc-day-sat.fc-daygrid-day,
+.fc-day.fc-day-sun.fc-daygrid-day {
+    background-color: transparent;
+}
+.fc-daygrid-event-harness{
+    visibility: hidden;
 }

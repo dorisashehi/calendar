@@ -59,7 +59,10 @@ buttons.forEach(button => {
 
                 if (day.classList.contains('available') !== true) {
 
-                    if (!day.classList.contains('fc-day-other') && (day.getAttribute('data-date') != null)) {
+                    if (!day.classList.contains('fc-day-other') 
+                    && !day.classList.contains('fc-day-sat') 
+                    && !day.classList.contains('fc-day-sun') 
+                    && (day.getAttribute('data-date') != null)) {
                         day.classList.remove('non-available');
                         day.classList.add('available');
                         saveAvailability(day.getAttribute('data-date'), true);
@@ -83,8 +86,6 @@ buttons.forEach(button => {
                 }
             });
         }
-       
-
     })
 });
 
@@ -108,9 +109,13 @@ document.addEventListener('DOMContentLoaded', function () {
                 initialView: 'dayGridMonth',
                 selectable: true,
                 select: function (info) {
-                    
-                    if (info.start.getDay() < 6) { // Only allow weekdays to be selected
-                        var clickedElement = info.jsEvent.target;
+                    var clickedElement = info.jsEvent.target;
+                    if (0 < info.start.getDay()
+                    && info.start.getDay() < 6 
+                    && !clickedElement.closest('td').classList.contains('fc-day-other')
+                    && !clickedElement.closest('td').classList.contains('fc-day-other')
+                     ) { // Only allow weekdays to be selected
+                        
                         //console.log(clickedElement.closest('td').classList.contains('fc-day-other'));
 
                         if (clickedElement.closest('td').classList.contains('available'))
@@ -154,10 +159,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         day.closest('td').classList.remove('non-available');
                         day.closest('td').classList.add('available');
                     });
-
-                    
-                   
-                    
                 }
             });
             calendar.render();

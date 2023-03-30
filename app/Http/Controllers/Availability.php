@@ -18,11 +18,6 @@ class Availability extends Controller
             ->get('date')
             ->toArray();
         return response()->json($dates);
-
-        // $dates = AvailabilityDates::where('user_id', true)
-        //     ->get('date')
-        //     ->toArray();
-        // return response()->json($dates);
     }
 
     /**
@@ -77,14 +72,6 @@ class Availability extends Controller
      */
     public function destroy(Request $request)
     {
-        //delete date
-        // print_r(
-        //     AvailabilityDates::where('date', $request->date)->where(
-        //         'user_id',
-        //         $request->user()->id
-        //     )
-        // );
-
         AvailabilityDates::where('date', $request->date)
             ->where('user_id', $request->user()->id)
             ->delete();
