@@ -13,14 +13,14 @@
 .fc-day.fc-daygrid-day{
     background-color: red;
 }
-.fc-day.fc-day-other.fc-daygrid-day,.fc-day.fc-day-other.fc-daygrid-day.available{
-    background-color: transparent;
-}
+
 .fc .fc-daygrid-day.fc-day-today.non-available,.fc .fc-daygrid-day.fc-day-today{
     background-color: red;
     border: 3px solid black;
 }
-
+.fc-day.fc-day-other.fc-daygrid-day,.fc-day.fc-day-other.fc-daygrid-day.available,.fc .fc-daygrid-day.fc-day-other.fc-day-today{
+    background-color: transparent;
+}
 .fc-day.fc-daygrid-day.available{
     background-color: green;
 }
@@ -34,4 +34,7 @@
 }
 .fc-daygrid-event-harness{
     visibility: hidden;
+}
+.fc .fc-highlight {
+    background: transparent;
 }
