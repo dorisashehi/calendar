@@ -6,6 +6,25 @@
 
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
-.available{
-    background-color: green !important;
+
+.non-available{
+    background-color: red;
+}
+.fc .fc-daygrid-day.fc-day-today.non-available{
+    background-color: red;
+}
+.fc-daygrid-event-harness{
+    visibility: hidden;
+}
+.fc-day.fc-daygrid-day{
+    background-color: red;
+}
+.fc-day.fc-day-other.fc-daygrid-day{
+    background-color: transparent;
+}
+.fc-day.fc-daygrid-day.available{
+    background-color: green;
+}
+.fc .fc-daygrid-day.fc-day-today.available{
+    background-color: green;
 }

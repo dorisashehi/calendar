@@ -52,7 +52,7 @@ const buttons = document.querySelectorAll('#availability');
 buttons.forEach(button => {
     button.addEventListener('click', () => {
         if(button.classList.contains('yes')){
-            console.log("------------------");
+            
             let available = button.getAttribute('data-value');
 
             document.querySelectorAll('.fc-day').forEach(day => {
@@ -60,6 +60,7 @@ buttons.forEach(button => {
                 if (day.classList.contains('available') !== true) {
 
                     if (!day.classList.contains('fc-day-other') && (day.getAttribute('data-date') != null)) {
+                        day.classList.remove('non-available');
                         day.classList.add('available');
                         saveAvailability(day.getAttribute('data-date'), true);
                     }
@@ -75,6 +76,7 @@ buttons.forEach(button => {
 
                     if (!day.classList.contains('fc-day-other') && (day.getAttribute('data-date') != null)) {
                         day.classList.remove('available');
+                        day.classList.add('non-available');
                         saveAvailability(day.getAttribute('data-date'), false);
                     }
 
@@ -106,11 +108,20 @@ document.addEventListener('DOMContentLoaded', function () {
                 initialView: 'dayGridMonth',
                 selectable: true,
                 select: function (info) {
+                    
                     if (info.start.getDay() < 6) { // Only allow weekdays to be selected
                         var clickedElement = info.jsEvent.target;
-                        //console.log(clickedElement);
+                        //console.log(clickedElement.closest('td').classList.contains('fc-day-other'));
 
-                        clickedElement.closest('td').classList.toggle('available');
+                        if (clickedElement.closest('td').classList.contains('available'))
+                        {
+                            clickedElement.closest('td').classList.add('non-available');
+                            clickedElement.closest('td').classList.remove('available');
+                        }else{
+                            clickedElement.closest('td').classList.add('available');
+                            clickedElement.closest('td').classList.remove('non-available');
+                        }
+                       // clickedElement.closest('td').classList.toggle('available');
 
 
                         const date1 = new Date(info.start);
@@ -124,16 +135,29 @@ document.addEventListener('DOMContentLoaded', function () {
                         const fromTime = `${hours}:${minutes}:${seconds}`;
                         let formated_date = fromDate + " " + fromTime;
                         //console.log(available); // Outputs: 2023-03-07
-                        //console.log(clickedElement.closest('td').classList.contains('available'));
+                        
                         saveAvailability(formated_date, clickedElement.closest('td').classList.contains('available'));
                     }
                 },
                 events: events,
                 eventDidMount: function (info) { //after all the events taken from database. add to td class available.
+                    // var dayGridEvents1 = document.querySelectorAll('.fc-daygrid-day');
+        
+                    // dayGridEvents1.forEach(function (day) {
+                    //     if (!day.closest('td').classList.contains("fc-day-other"))
+                    //     {
+                    //         day.closest('td').classList.add('non-available');
+                    //     }
+                    // });
                     var dayGridEvents = document.querySelectorAll('.fc-daygrid-event-harness');
                     dayGridEvents.forEach(function (day) {
-                        var eventElement = day.closest('td').classList.add('available');
+                        day.closest('td').classList.remove('non-available');
+                        day.closest('td').classList.add('available');
                     });
+
+                    
+                   
+                    
                 }
             });
             calendar.render();
