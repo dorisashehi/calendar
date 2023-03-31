@@ -12,6 +12,7 @@ function date_information(date_passed,date_version){
     return month_day
 }
 
+//create an event into calendar
 function create_event(start_date){
     var newEvent = {
         title: 'Available',
@@ -29,16 +30,17 @@ function saveAvailability(date, available) {
     if (available == false){
         method_type = 'DELETE';
     }
-    fetch('/availability/' + date, {
+    return fetch('/availability/' + date, {
         method: method_type,
         headers: {
             'X-CSRF-TOKEN': csrfToken
         }
     })
-    .then(data => {
-        // Handle the response data here (e.g. update UI with success message)
-        //console.log('Success:', data);
-        return "dsd";
+    .then(response => {
+        // Handle the response data here
+        if (response.ok) {
+            return true;
+        }
     })
 }
 
@@ -56,15 +58,18 @@ buttons.forEach(button => {
 
                     day.classList.remove('non-available');
                     day.classList.add('available');
-                    saveAvailability(day.getAttribute('data-date'), true);
+                    saveAvailability(day.getAttribute('data-date'), true)
+                    .then(result => {
+                        if (result === true) {
+                            const event_date = date_information(day.getAttribute('data-date'), "shortdate");
+                            const current_date = date_information(calendar.view.currentStart, "shortdate");
+                            var same_month_year = event_date == current_date ? true : false;
 
-                    const event_date = date_information(day.getAttribute('data-date'),"shortdate");
-                    const current_date = date_information(calendar.view.currentStart,"shortdate");
-                    var same_month_year = event_date == current_date ? true : false;
-
-                    if (same_month_year === true){
-                        create_event(day.getAttribute('data-date'));
-                    }
+                            if (same_month_year === true) {
+                                create_event(day.getAttribute('data-date'));
+                            }
+                        }
+                    });
                 }
             });
         }else{
@@ -77,18 +82,20 @@ buttons.forEach(button => {
 
                         day.classList.remove('available');
                         day.classList.add('non-available');
-                        saveAvailability(day.getAttribute('data-date'), false);
-
-                        let events = calendar.getEvents();
-                        events.forEach(event => {
-                            let event_date = date_information(event.start,"shortdate");
-                            let current_date = date_information(calendar.view.currentStart,"shortdate"); 
-                            let same_month_year = event_date == current_date ? true : false;
-                            if (same_month_year === true){
-                                event.remove();
+                        saveAvailability(day.getAttribute('data-date'), false)
+                        .then(result => {
+                            if (result === true) {
+                                let events = calendar.getEvents();
+                                events.forEach(event => {
+                                    let event_date = date_information(event.start, "shortdate");
+                                    let current_date = date_information(calendar.view.currentStart, "shortdate");
+                                    let same_month_year = event_date == current_date ? true : false;
+                                    if (same_month_year === true) {
+                                        event.remove();
+                                    }
+                                }); 
                             }
-                        });        
-                    
+                        });
                 }
             });
         }
@@ -117,34 +124,45 @@ document.addEventListener('DOMContentLoaded', function () {
                     var clickedElement = info.jsEvent.target;//get the element clickted
                     if (!clickedElement.closest('td').classList.contains('fc-day-other')) { //Allow to select only dates of that that month
 
-                        if (clickedElement.closest('td').classList.contains('available')) {
-                            clickedElement.closest('td').classList.add('non-available');
-                            clickedElement.closest('td').classList.remove('available');
-                        } else {
-                            clickedElement.closest('td').classList.add('available');
-                            clickedElement.closest('td').classList.remove('non-available');
-                        }
+                  
 
                         let selected_date = date_information(info.start, "fulldate");
+                        let data_saved = false;
 
-                        saveAvailability(selected_date, clickedElement.closest('td').classList.contains('available'));
+                        saveAvailability(selected_date, !clickedElement.closest('td').classList.contains('available'))
+                        .then(result => {
+                            
+                            if(result === true){
 
-                        //loop each event and only if the selected date hasnt event ,add an event
-                        let events = calendar.getEvents();
-                        let matchingEvent = null;
-                        events.forEach(event => {
-                            let event_date = date_information(event.start, "fulldate");
-                            if (event.title === 'Available' && (event_date === selected_date)) {
-                                matchingEvent = event;
-                                event.remove();
+                                console.log('Result:', result);
+
+                                if (clickedElement.closest('td').classList.contains('available')) {
+                                    clickedElement.closest('td').classList.add('non-available');
+                                    clickedElement.closest('td').classList.remove('available');
+                                } else {
+                                    clickedElement.closest('td').classList.add('available');
+                                    clickedElement.closest('td').classList.remove('non-available');
+                                }
+
+                                //loop each event and only if the selected date hasnt event ,add an event
+                                let events = calendar.getEvents();
+                                let matchingEvent = null;
+                                events.forEach(event => {
+                                    let event_date = date_information(event.start, "fulldate");
+                                    if (event.title === 'Available' && (event_date === selected_date)) {
+                                        matchingEvent = event;
+                                        event.remove();
+                                    }
+                                });
+
+                                if (!matchingEvent) {
+                                    //Put events only to dates without event
+                                    create_event(info.start);
+                                }
+                                
                             }
+                            
                         });
-
-                        if (!matchingEvent) {
-                            //Put events only to dates without event
-                            create_event(info.start);
-                        }
-
                     }
                 },
                 events: events,
