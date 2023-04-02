@@ -30,7 +30,7 @@ function saveAvailability(date, available) {
     if (available == false){
         method_type = 'DELETE';
     }
-    return fetch('/availability/' + date, {
+    return fetch('/public/availability/' + date, {
         method: method_type,
         headers: {
             'X-CSRF-TOKEN': csrfToken
@@ -44,6 +44,27 @@ function saveAvailability(date, available) {
     })
 }
 
+
+//save date into database or delete it
+function checkdate(date) {
+
+    let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+   
+    return fetch('/public/availability/' + date, {
+        method: 'GET',
+        headers: {
+            'X-CSRF-TOKEN': csrfToken
+        }
+    })
+    .then(response => {
+        // Handle the response data here
+        if (response.ok) {
+            return true;
+        }
+    })
+}
+
+
 //remove all and show all dates.
 const buttons = document.querySelectorAll('#availability');
 buttons.forEach(button => {
@@ -56,11 +77,13 @@ buttons.forEach(button => {
                 && !day.classList.contains('fc-day-other') 
                 && (day.getAttribute('data-date') != null)) {
 
-                    day.classList.remove('non-available');
-                    day.classList.add('available');
+                 
                     saveAvailability(day.getAttribute('data-date'), true)
                     .then(result => {
                         if (result === true) {
+                            day.classList.remove('non-available');
+                            day.classList.add('available');
+                            
                             const event_date = date_information(day.getAttribute('data-date'), "shortdate");
                             const current_date = date_information(calendar.view.currentStart, "shortdate");
                             var same_month_year = event_date == current_date ? true : false;
@@ -80,11 +103,13 @@ buttons.forEach(button => {
                     && !day.classList.contains('fc-day-other') 
                     && (day.getAttribute('data-date') != null)) {
 
-                        day.classList.remove('available');
-                        day.classList.add('non-available');
+
                         saveAvailability(day.getAttribute('data-date'), false)
                         .then(result => {
                             if (result === true) {
+                                day.classList.remove('available');
+                                day.classList.add('non-available');
+
                                 let events = calendar.getEvents();
                                 events.forEach(event => {
                                     let event_date = date_information(event.start, "shortdate");
@@ -105,8 +130,9 @@ buttons.forEach(button => {
 document.addEventListener('DOMContentLoaded', function () {
    
     var calendarEl = document.getElementById('calendar');
+    let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     //take all the days available from database and pass as events into database.
-    fetch('/availability')
+    fetch('/public/availability')
         .then(response => response.json())
         .then(data => {
             // add an event to each available days taken from database.
@@ -167,14 +193,37 @@ document.addEventListener('DOMContentLoaded', function () {
                 },
                 events: events,
                 eventDidMount: function (info) {
+                    
                     //after all the events taken from database. add to td class available.
                     var dayGridEvents = document.querySelectorAll('.fc-daygrid-event-harness');
                     dayGridEvents.forEach(function (day) {
                         day.closest('td').classList.remove('non-available');
                         day.closest('td').classList.add('available');
                     });
-                }
+
+                    // var cells = document.querySelectorAll('.fc-day');
+                    // cells.forEach(function (cellEl) {
+                    //     cellEl.addEventListener('mouseover', function () {
+                    //         console.log('Mouse over:', cellEl.getAttribute('data-date'));
+                    //         // do something else, like show a tooltip or highlight the cell
+
+                    //         let date_to_check = date_information(cellEl.getAttribute('data-date'), "fulldate");
+                    //         checkdate(date_to_check)
+                    //                  .then(result => {
+
+                    //                    console.log(result);
+
+                    //                  });
+
+                            
+                    //     });
+                    // });
+
+                 
+                },
             });
             calendar.render();
         });
+
+
 });

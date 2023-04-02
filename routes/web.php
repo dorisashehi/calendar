@@ -58,18 +58,7 @@ Route::delete('/availability/{date}', [Availability::class, 'destroy'])->name(
     'delete'
 );
 
-// Route::post('/availability/{date}', function ($date) {
-//     DB::table('availability')->insert([
-//         'date' => $date,
-//     ]);
-
-//     return response()->json(['status' => 'success']);
-// });
-
-// Route::delete('/availability/{date}', function ($date) {
-//     DB::table('availability')
-//         ->where('date', $date)
-//         ->delete();
-
-//     return response()->json(['status' => 'success']);
-// });
+// Route::get('/availability/{date}', [
+//     Availability::class,
+//     'checkAvailability',
+// ])->name('checkAvailability');
