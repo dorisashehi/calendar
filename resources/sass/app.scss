@@ -18,6 +18,9 @@
     background-color: red;
     border: 3px solid black;
 }
+.fc  .fc-daygrid-day.fc-day-today.fc-day-other{
+      border: none;
+}
 .fc-day.fc-day-other.fc-daygrid-day,
 .fc-day.fc-day-other.fc-daygrid-day.available,
 .fc .fc-daygrid-day.fc-day-other.fc-day-today{
@@ -41,4 +44,35 @@
 .fc .fc-highlight {
     background: transparent;
 }
-
+#availability{
+    text-decoration: none;
+    color: #fff;
+    padding: 10px 15px;
+    font-weight: 700;
+    font-size: 20px;
+}
+#availability.yes{
+    background-color: green;
+}
+#availability.no{
+    background-color: red;
+}
+.actions{
+    margin: 30px 0px;
+}
+.fc .fc-daygrid-day-number{
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+}
+thead tr[role="row"]{
+    background: var(--fc-button-bg-color);
+    th a{
+        color: white;
+        text-decoration: none;
+        font-size: 20px;
+    }
+}
+.card-header, .card-body{
+    font-size: 20px;
+}
