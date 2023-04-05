@@ -46,17 +46,17 @@ Route::get('/home', [
     'index',
 ])->name('home');
 
-Route::get('/availability', [Availability::class, 'index'])->name('index');
+//Route::get('/availability', [Availability::class, 'index'])->name('index');
 
-//post a date into database
-Route::post('/availability/{date}', [Availability::class, 'store'])->name(
-    'availability'
-);
+// //post a date into database
+// Route::post('/availability/{date}', [Availability::class, 'store'])->name(
+//     'availability'
+// );
 
-//delete a date into database
-Route::delete('/availability/{date}', [Availability::class, 'destroy'])->name(
-    'delete'
-);
+// //delete a date from database
+// Route::delete('/availability/{date}', [Availability::class, 'destroy'])->name(
+//     'delete'
+// );
 
 // Route::get('/availability/{date}', [
 //     Availability::class,

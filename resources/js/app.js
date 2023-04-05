@@ -23,15 +23,17 @@ function create_event(start_date){
 }
 
 //save date into database or delete it
-function saveAvailability(date, available) {
+function saveAvailability(date, action) {
 
     let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-    let method_type = 'POST';
-    if (available == false){
-        method_type = 'DELETE';
-    }
-    return fetch('/public/availability/' + date, {
-        method: method_type,
+    var url;
+    (action === 'delete') ? url = '/api/availability/delete/date?' : url = '/api/availability/date?';
+    return fetch(url + new URLSearchParams({
+        user_id: window.user_id,
+        date: date,
+       }), 
+       {
+        method: 'POST',
         headers: {
             'X-CSRF-TOKEN': csrfToken
         }
@@ -50,7 +52,7 @@ function checkdate(date) {
 
     let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
    
-    return fetch('/public/availability/' + date, {
+    return fetch('/api/availability/' + date, {
         method: 'GET',
         headers: {
             'X-CSRF-TOKEN': csrfToken
@@ -78,7 +80,7 @@ buttons.forEach(button => {
                 && (day.getAttribute('data-date') != null)) {
 
                  
-                    saveAvailability(day.getAttribute('data-date'), true)
+                    saveAvailability(day.getAttribute('data-date'),"add")
                     .then(result => {
                         if (result === true) {
                             day.classList.remove('non-available');
@@ -104,7 +106,7 @@ buttons.forEach(button => {
                     && (day.getAttribute('data-date') != null)) {
 
 
-                        saveAvailability(day.getAttribute('data-date'), false)
+                        saveAvailability(day.getAttribute('data-date'),"delete")
                         .then(result => {
                             if (result === true) {
                                 day.classList.remove('available');
@@ -129,10 +131,17 @@ buttons.forEach(button => {
 
 document.addEventListener('DOMContentLoaded', function () {
    
+    console.log(window.user_id);
     var calendarEl = document.getElementById('calendar');
     let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     //take all the days available from database and pass as events into database.
-    fetch('/public/availability')
+    fetch('/api/availability?user_id=' + window.user_id, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            }
+        })
         .then(response => response.json())
         .then(data => {
             // add an event to each available days taken from database.
@@ -154,8 +163,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         let selected_date = date_information(info.start, "fulldate");
                         let data_saved = false;
-
-                        saveAvailability(selected_date, !clickedElement.closest('td').classList.contains('available'))
+                        console.log(clickedElement.closest('td').classList.contains('available'));
+                        let action;
+                        (clickedElement.closest('td').classList.contains('available') === true) ? action = "delete" : action = "add";
+                        saveAvailability(selected_date,action)
                         .then(result => {
                             
                             if(result === true){
@@ -227,3 +238,4 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 });
+
