@@ -27,7 +27,7 @@ function saveAvailability(date, action) {
 
     let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     var url;
-    (action === 'delete') ? url = '/api/availability/delete/date?' : url = '/api/availability/date?';
+    (action === 'delete') ? url = '/public/api/availability/delete/date?' : url = '/public/api/availability/date?';
     return fetch(url + new URLSearchParams({
         user_id: window.user_id,
         date: date,
@@ -52,7 +52,7 @@ function checkdate(date) {
 
     let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
    
-    return fetch('/api/availability/' + date, {
+    return fetch('/public/api/availability/' + date, {
         method: 'GET',
         headers: {
             'X-CSRF-TOKEN': csrfToken
@@ -131,11 +131,11 @@ buttons.forEach(button => {
 
 document.addEventListener('DOMContentLoaded', function () {
    
-    console.log(window.user_id);
+    //console.log(window.user_id);
     var calendarEl = document.getElementById('calendar');
     let csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
     //take all the days available from database and pass as events into database.
-    fetch('/api/availability?user_id=' + window.user_id, {
+    fetch('/public/api/availability?user_id=' + window.user_id, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                         let selected_date = date_information(info.start, "fulldate");
                         let data_saved = false;
-                        console.log(clickedElement.closest('td').classList.contains('available'));
+                        //console.log(clickedElement.closest('td').classList.contains('available'));
                         let action;
                         (clickedElement.closest('td').classList.contains('available') === true) ? action = "delete" : action = "add";
                         saveAvailability(selected_date,action)
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             
                             if(result === true){
 
-                                console.log('Result:', result);
+                                //console.log('Result:', result);
 
                                 if (clickedElement.closest('td').classList.contains('available')) {
                                     clickedElement.closest('td').classList.add('non-available');
