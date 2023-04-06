@@ -21,6 +21,7 @@ docker-compose up
 -composer install\
 -npm install && npm run dev\
 -enter inside docker container of the project and run: php artisan migrate
+-At frontend register to laravel and then you can see the calendar.
 
 ## PHPUNIT
 
