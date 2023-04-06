@@ -5,7 +5,7 @@
 
 ## Technologies Used
 
--Frontend:Pure Js(fullcalendar)
+-Frontend:Pure Js(fullcalendar)\
 -Backend: Laravel
 
 ## Main Branch
