@@ -16,7 +16,7 @@
 
 docker-compose up
 
-## Laravel Installation (https://www.allphptricks.com/laravel-9-bootstrap-5-auth-scaffolding/)
+## Laravel Installation
 
 -composer install\
 -npm install && npm run dev\
