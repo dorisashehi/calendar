@@ -3,6 +3,11 @@
 -php version:8.1\
 -laravel version:10
 
+## Technologies Used
+
+-Frontend:Pure Js(fullcalendar)
+-Backend: Laravel
+
 ## Main Branch
 
 -master
